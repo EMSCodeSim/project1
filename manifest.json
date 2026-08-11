@@ -1,12 +1,15 @@
 {
-  "name": "ResponderLog — Fire & EMS Career Logbook",
+  "name": "ResponderLog — Fire & EMS Career Vault",
   "short_name": "ResponderLog",
-  "description": "Private, offline-first Fire & EMS logbook for calls, skills, training, certifications, and career accomplishments.",
+  "description": "Private, offline-first career logging for Fire & EMS responders.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#091018",
-  "theme_color": "#0b1118",
+  "orientation": "portrait-primary",
+  "background_color": "#07101a",
+  "theme_color": "#07101a",
+  "categories": ["productivity", "medical", "education"],
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }
