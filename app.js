@@ -138,3 +138,11 @@ function careerPulse(){
   const score=Math.round(certScore*.35+trainingScore*.25+skillScore*.25+goalScore*.15);
   return {score,certScore,trainingScore,skillScore,goalScore,training90,skill90};
 }
+
+function loadResponderModule(src){
+  return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.defer=true;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);});
+}
+(async()=>{
+  try{await loadResponderModule('./views-core.js');await loadResponderModule('./views-career.js');await loadResponderModule('./actions.js');}
+  catch(err){console.error('ResponderLog modules failed to load.',err);}
+})();
