@@ -1,59 +1,63 @@
 # ResponderLog
 
-ResponderLog is a privacy-first, offline-first Fire & EMS career logbook built for responders who want one simple place to track the work that matters over time.
+ResponderLog is a privacy-first, offline-first personal career vault for firefighters, EMTs, paramedics, rescue personnel, and other responders.
 
-## Why this exists
+## Product idea
 
-Fire and EMS professionals commonly end up spreading career evidence across notes apps, spreadsheets, certification portals, training systems, calendars, and memory. ResponderLog keeps a personal, portable record without trying to replace an ePCR, RMS, LMS, scheduling system, or department record system.
+Department systems are built for the department. ResponderLog is built for the individual responder and is intended to remain useful across stations, employers, roles, and decades.
 
-The first version focuses on five jobs:
+It keeps six parts of a responder's professional history together:
 
-- Log incident categories without patient-identifying information.
-- Track hands-on EMS and fire skills.
-- Track training and drill time.
-- Watch certification expiration dates.
-- Build a promotion-ready record of accomplishments, projects, instruction, awards, and leadership work.
+1. **Career log** — non-identifying incident categories, hands-on skills, training, and accomplishments.
+2. **Exposure record** — a personal history of occupational smoke, chemical, biological, noise, temperature, near-miss, and related exposures.
+3. **Certification radar** — expiration dates plus optional continuing-education / renewal-hour progress.
+4. **Career goals** — target dates, next steps, and progress.
+5. **Career report** — lifetime training, skill repetitions, credentials, and accomplishments for reviews and promotion preparation.
+6. **Portable backup** — full JSON backup plus career-log and exposure CSV exports.
 
 ## Privacy model
 
-ResponderLog intentionally has **no fields for patient names, DOBs, addresses, MRNs, phone numbers, or other identifiers**. Data is stored in the browser's local storage on the user's device. There is no account, cloud database, analytics SDK, or server-side patient record.
+ResponderLog intentionally has no patient-name, DOB, patient-address, MRN, phone, or similar patient fields. It includes lightweight pattern checks that block several common forms of identifying information in free-text fields.
 
-Users can export a JSON backup or CSV log and import a JSON backup later. Clearing browser/site data can erase local records, so periodic backup is recommended.
+Data is stored in browser `localStorage` on the user's device. There is no ResponderLog account, analytics SDK, cloud database, or server-side patient record.
 
-## Features
+ResponderLog is **not** an ePCR, medical device, official department record, exposure reporting system, workers' compensation filing system, or substitute for agency documentation requirements.
 
-- Installable PWA
-- Works offline after first load
-- Responsive phone/desktop layout
-- Incident, skill, training, and accomplishment quick-log modes
-- Fire + EMS skill/category library
-- 30-day dashboard
-- Certification renewal radar
-- Career portfolio summary
+## Key features
+
+- Responsive mobile + desktop interface
+- Installable progressive web app
+- Offline cache after first load
+- One-tap quick capture
+- Editable career records
+- Search + category filters
+- Skill confidence / practice tracking
+- Training-hour totals
+- Occupational exposure log
+- Certification expiry alerts
+- Optional renewal-hour progress
+- Career goals + progress
+- Print-friendly career report
+- Dark / light themes
 - JSON backup/import
-- CSV log export
-- Local-only storage
+- CSV exports
+- Automatic migration from `responderlog.v1`
+- No dependencies or build step
 
 ## Run locally
-
-No build step or dependencies are required.
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Then open `http://localhost:8080`.
+Open `http://localhost:8080`.
 
-## Validation
+## Validate
 
 ```bash
 node --check app.js
 python3 -m json.tool manifest.json > /dev/null
 ```
-
-## Scope and safety
-
-ResponderLog is a personal career/training record, not a medical device, ePCR, clinical decision-support tool, official department record, or substitute for agency documentation requirements. Never store protected health information or sensitive incident-identifying information in the app.
 
 ## License
 
