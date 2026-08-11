@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1118" />
+  <meta name="description" content="A private, offline-first Fire & EMS career logbook for calls, skills, training, certifications, and accomplishments." />
+  <title>ResponderLog — Fire & EMS Career Logbook</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-mark" aria-hidden="true">RL</div>
+        <div>
+          <div class="eyebrow">FIRE + EMS</div>
+          <h1>ResponderLog</h1>
+        </div>
+      </div>
+      <button class="icon-btn" id="openSettings" aria-label="Open data tools">⋯</button>
+    </header>
+
+    <main id="app" tabindex="-1">
+      <section class="hero card">
+        <div>
+          <p class="eyebrow">YOUR CAREER, NOT PATIENT DATA</p>
+          <h2>Log the work you’ll want to remember later.</h2>
+          <p class="muted">Track incidents, hands-on skills, drills, certifications, and accomplishments — locally on this device.</p>
+        </div>
+        <button class="primary" data-action="open-log">+ Quick log</button>
+      </section>
+
+      <section class="privacy-note" role="note">
+        <strong>No PHI.</strong> Never enter names, DOBs, addresses, medical record numbers, or other patient-identifying information.
+      </section>
+
+      <section class="stats-grid" aria-label="Career snapshot">
+        <article class="stat card"><span>Incidents</span><strong id="statIncidents">0</strong><small>last 30 days</small></article>
+        <article class="stat card"><span>Skills</span><strong id="statSkills">0</strong><small>last 30 days</small></article>
+        <article class="stat card"><span>Training</span><strong id="statTraining">0</strong><small>minutes / 30 days</small></article>
+        <article class="stat card"><span>Certs due</span><strong id="statCerts">0</strong><small>within 90 days</small></article>
+      </section>
+
+      <section class="section-head">
+        <div><p class="eyebrow">RECENT ACTIVITY</p><h3>Your log</h3></div>
+        <button class="text-btn" data-view="history">View all</button>
+      </section>
+      <section id="recentList" class="stack"></section>
+
+      <section class="section-head">
+        <div><p class="eyebrow">STAY READY</p><h3>Certifications</h3></div>
+        <button class="text-btn" data-action="open-cert">+ Add</button>
+      </section>
+      <section id="certPreview" class="stack"></section>
+
+      <section class="career-card card">
+        <div>
+          <p class="eyebrow">PROMOTION FILE</p>
+          <h3>Build your career evidence as you go.</h3>
+          <p class="muted">Keep a record of classes, major drills, committee work, instructor time, projects, awards, and meaningful accomplishments.</p>
+        </div>
+        <button class="secondary" data-view="portfolio">Open portfolio</button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <button class="nav-item active" data-view="home"><span>⌂</span><small>Home</small></button>
+      <button class="nav-item" data-view="history"><span>≡</span><small>History</small></button>
+      <button class="nav-add" data-action="open-log" aria-label="Quick log">+</button>
+      <button class="nav-item" data-view="certs"><span>✓</span><small>Certs</small></button>
+      <button class="nav-item" data-view="portfolio"><span>★</span><small>Portfolio</small></button>
+    </nav>
+  </div>
+
+  <dialog id="logDialog" class="modal">
+    <form method="dialog" id="logForm">
+      <div class="modal-head">
+        <div><p class="eyebrow">QUICK LOG</p><h3>Add an entry</h3></div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+
+      <div class="segmented" id="entryType" role="group" aria-label="Entry type">
+        <button type="button" class="seg active" data-type="incident">Incident</button>
+        <button type="button" class="seg" data-type="skill">Skill</button>
+        <button type="button" class="seg" data-type="training">Training</button>
+        <button type="button" class="seg" data-type="accomplishment">Accomplishment</button>
+      </div>
+
+      <input type="hidden" id="logType" value="incident" />
+
+      <label>Date & time<input id="logDate" type="datetime-local" required /></label>
+      <label>Category
+        <select id="logCategory" required></select>
+      </label>
+      <label id="minutesWrap" class="hidden">Minutes<input id="logMinutes" type="number" min="1" max="1440" inputmode="numeric" placeholder="60" /></label>
+      <label>Short note <span class="optional">optional — no patient identifiers</span>
+        <textarea id="logNote" maxlength="220" rows="3" placeholder="Example: Led hose deployment drill; practiced 2-person extension ladder raise."></textarea>
+      </label>
+      <div class="danger-copy">Do not document patient names, exact addresses, DOBs, phone numbers, MRNs, or identifying incident details.</div>
+      <button type="submit" class="primary full">Save entry</button>
+    </form>
+  </dialog>
+
+  <dialog id="certDialog" class="modal">
+    <form method="dialog" id="certForm">
+      <div class="modal-head">
+        <div><p class="eyebrow">CERTIFICATION</p><h3>Add certification</h3></div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <label>Certification name<input id="certName" required maxlength="80" placeholder="Paramedic, ACLS, Fire Officer I…" /></label>
+      <label>Expiration date<input id="certExpiry" type="date" required /></label>
+      <label>Credential / note <span class="optional">optional</span><input id="certNote" maxlength="120" placeholder="State, provider, renewal note" /></label>
+      <button type="submit" class="primary full">Save certification</button>
+    </form>
+  </dialog>
+
+  <dialog id="dataDialog" class="modal">
+    <div class="modal-head">
+      <div><p class="eyebrow">DATA TOOLS</p><h3>Your data stays yours</h3></div>
+      <button class="icon-btn" id="closeSettings" aria-label="Close">×</button>
+    </div>
+    <p class="muted">ResponderLog uses this browser’s local storage. Export a backup before clearing browser data or changing devices.</p>
+    <div class="tool-grid">
+      <button class="secondary" id="exportJson">Export backup (.json)</button>
+      <button class="secondary" id="exportCsv">Export log (.csv)</button>
+      <label class="secondary file-label">Import backup<input type="file" id="importJson" accept="application/json" hidden /></label>
+      <button class="danger" id="clearData">Clear all local data</button>
+    </div>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
