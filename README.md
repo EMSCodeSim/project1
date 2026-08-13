@@ -49,6 +49,8 @@ ResponderLog is **not** an ePCR, medical device, official department record, exp
 - Career goals + progress
 - Personal taskbooks with Driver / Operator, Fire Officer I, Field Training Officer, and custom templates
 - Task completion history, progress meters, and printable qualification views
+- Transparent promotion-readiness briefings that map logged evidence to a selected target role
+- Suggested next actions based on the thinnest documented evidence category
 - Print-friendly career report
 - Dark / light themes
 - JSON backup/import

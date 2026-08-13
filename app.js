@@ -9,6 +9,13 @@ const taskbookTemplates = {
   'Custom taskbook': ['Define the qualification standard','Add required courses and certifications','Add hands-on performance tasks','Assign evaluator expectations','Complete final review']
 };
 
+const readinessProfiles = {
+  'Driver / Operator': {certs:['Driver','Operator'],training:24,skills:20,wins:2,taskbook:'Driver / Operator',next:'Start or continue your Driver / Operator taskbook.'},
+  'Fire Officer I': {certs:['Officer'],training:40,skills:25,wins:5,taskbook:'Fire Officer I',next:'Document leadership work and continue your Fire Officer I taskbook.'},
+  'Field Training Officer': {certs:['Instructor','FTO','Preceptor'],training:24,skills:30,wins:5,taskbook:'Field Training Officer',next:'Capture teaching and mentoring evidence, then complete your FTO taskbook.'},
+  'Paramedic': {certs:['Paramedic','ACLS','PALS'],training:48,skills:40,wins:3,taskbook:'',next:'Build a balanced clinical skill history and close certification gaps.'}
+};
+
 const catalog = {
   incident: ['Medical', 'Trauma', 'Cardiac arrest', 'Motor vehicle collision', 'Structure fire', 'Wildland / brush', 'Alarm / investigation', 'Hazmat', 'Rescue / extrication', 'Public assist', 'Standby / coverage', 'Other incident'],
   skill: ['IV access', 'IO access', '12-lead ECG', 'Airway management', 'BVM ventilation', 'CPAP', 'Medication administration', 'Patient assessment', 'Splinting', 'Hemorrhage control', 'Extrication', 'Pump operations', 'Hose deployment', 'Ladders', 'Forcible entry', 'Search', 'Ropes / knots', 'SCBA / air management', 'Driver / apparatus', 'Other skill'],
@@ -35,7 +42,7 @@ function defaultState(){
     version:3,
     profile:{name:'',role:'',agency:'',startDate:''},
     entries:[], certs:[], exposures:[], goals:[], taskbooks:[],
-    settings:{theme:'dark'}
+    settings:{theme:'dark',targetRole:'Fire Officer I'}
   };
 }
 
@@ -116,7 +123,7 @@ function applyTheme(){
 function navState(view){
   qsa('.rail-link[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===view));
   qsa('.nav-item[data-view]').forEach(btn=>{
-    const careerGroup=['career','portfolio','exposures','goals','taskbooks'];
+    const careerGroup=['career','portfolio','exposures','goals','taskbooks','readiness'];
     btn.classList.toggle('active',btn.dataset.view===view||(btn.dataset.view==='career'&&(careerGroup.includes(view)||view.startsWith('taskbook:'))));
   });
 }
