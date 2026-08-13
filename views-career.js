@@ -47,9 +47,28 @@ function renderCareer(){
     <section class="stack">
       <button class="quick-card exposure" data-view="exposures" style="width:100%;min-height:128px"><span class="quick-icon">EXP</span><strong>Exposure record</strong><small>${state.exposures.length} personal records • ${significant} significant</small></button>
       <button class="quick-card win" data-view="goals" style="width:100%;min-height:128px"><span class="quick-icon">◎</span><strong>Career goals</strong><small>${activeGoals} active targets • keep the next step visible</small></button>
+      <button class="quick-card training" data-view="taskbooks" style="width:100%;min-height:128px"><span class="quick-icon">▣</span><strong>Taskbooks</strong><small>${state.taskbooks.length} qualification paths • turn a goal into completed work</small></button>
       <button class="quick-card skill" data-view="portfolio" style="width:100%;min-height:128px"><span class="quick-icon">★</span><strong>Career report</strong><small>Training, skills, credentials, accomplishments, and promotion evidence</small></button>
     </section>
     ${expDue?`<div class="backup-nudge"><p><strong style="color:var(--text)">${plural(expDue,'certification')} expired.</strong><br>Open Certifications to update your renewal status.</p><button class="secondary compact-button" data-view="certs">Review</button></div>`:''}`;
+}
+
+function taskbookProgress(book){const total=book.tasks.length,done=book.tasks.filter(t=>t.done).length;return {total,done,pct:total?Math.round(done/total*100):0};}
+
+function renderTaskbooks(){
+  currentView='taskbooks'; navState('taskbooks');
+  qs('#app').innerHTML=`
+    <div class="view-title"><p class="eyebrow">FROM GOAL TO SIGN-OFF</p><h2>Taskbooks</h2><p class="muted">Break a promotion or qualification into work you can finish one shift at a time.</p><div class="title-actions"><button class="primary" data-action="open-taskbook">+ Start taskbook</button></div></div>
+    <div class="privacy-strip"><b>PERSONAL WORKING COPY</b><span>Use department-issued forms and required evaluator signatures when they are the official record.</span></div>
+    <section class="taskbook-grid">${state.taskbooks.length?state.taskbooks.map(book=>{const p=taskbookProgress(book);return `<button class="taskbook-card card" data-open-taskbook="${book.id}"><span class="status-pill ${p.pct===100?'good':'neutral'}">${p.pct===100?'Complete':'In progress'}</span><h3>${escapeHtml(book.name)}</h3><p>${p.done} of ${p.total} tasks complete${book.targetDate?` • target ${formatDate(`${book.targetDate}T12:00:00`,{year:true})}`:''}</p><div class="progress-track"><div class="progress-fill" style="--progress:${p.pct}%"></div></div><strong>${p.pct}%</strong></button>`}).join(''):emptyCard('▣','Start your first taskbook','Choose Driver / Operator, Fire Officer I, Field Training Officer, or build your own.',`<button class="primary" data-action="open-taskbook" style="margin-top:12px">Choose a path</button>`)}</section>`;
+}
+
+function renderTaskbookDetail(id){
+  const book=state.taskbooks.find(b=>b.id===id); if(!book){renderTaskbooks();return;}
+  currentView=`taskbook:${id}`; navState('taskbooks'); const p=taskbookProgress(book);
+  qs('#app').innerHTML=`<div class="view-title"><button class="text-btn" data-view="taskbooks">← All taskbooks</button><p class="eyebrow" style="margin-top:16px">QUALIFICATION PATH</p><h2>${escapeHtml(book.name)}</h2><p class="muted">${p.done} of ${p.total} complete${book.targetDate?` • target ${formatDate(`${book.targetDate}T12:00:00`,{year:true})}`:''}</p><div class="title-actions"><button class="primary" data-action="open-task" data-book-id="${book.id}">+ Add task</button><button class="secondary" data-action="print-report">Print</button><button class="text-btn danger-text" data-delete-taskbook="${book.id}">Delete taskbook</button></div></div>
+  <article class="taskbook-meter card"><div><span>Overall progress</span><strong>${p.pct}%</strong></div><div class="progress-track"><div class="progress-fill" style="--progress:${p.pct}%"></div></div></article>
+  <section class="task-list">${book.tasks.map((task,i)=>`<article class="task-row card ${task.done?'done':''}"><button class="task-check" data-toggle-task="${task.id}" data-book-id="${book.id}" aria-label="Mark ${escapeHtml(task.name)} ${task.done?'incomplete':'complete'}">${task.done?'✓':''}</button><div><strong>${escapeHtml(task.name)}</strong>${task.note?`<span>${escapeHtml(task.note)}</span>`:''}</div><small>${task.done&&task.completedAt?formatDate(task.completedAt):`Task ${i+1}`}</small><button class="mini-action" data-delete-task="${task.id}" data-book-id="${book.id}">Delete</button></article>`).join('')||emptyCard('＋','No tasks yet','Add the first requirement for this qualification.')}</section>`;
 }
 
 function renderPortfolio(){
@@ -84,6 +103,8 @@ function renderView(view){
   else if(view==='certs')renderCerts();
   else if(view==='exposures')renderExposures();
   else if(view==='goals')renderGoals();
+  else if(view==='taskbooks')renderTaskbooks();
+  else if(view.startsWith('taskbook:'))renderTaskbookDetail(view.split(':')[1]);
   else if(view==='career')renderCareer();
   else if(view==='portfolio')renderPortfolio();
   window.scrollTo({top:0,behavior:'smooth'});

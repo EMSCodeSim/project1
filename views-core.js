@@ -60,7 +60,7 @@ function renderHome(){
   const renewals=[...state.certs].sort(byExpiry).slice(0,3);
   const goals=[...state.goals].filter(g=>(Number(g.progress)||0)<100).sort((a,b)=>String(a.targetDate||'9999').localeCompare(String(b.targetDate||'9999'))).slice(0,2);
   const pulse=careerPulse();
-  const totalRecords=state.entries.length+state.certs.length+state.exposures.length+state.goals.length;
+  const totalRecords=state.entries.length+state.certs.length+state.exposures.length+state.goals.length+state.taskbooks.length;
   const lastBackup=Number(localStorage.getItem(BACKUP_KEY)||0);
   const backupDue=totalRecords>=10&&(!lastBackup||Date.now()-lastBackup>30*86400000);
   qs('#app').innerHTML=`

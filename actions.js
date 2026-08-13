@@ -41,12 +41,15 @@ function openProfile(){
   qs('#profileName').value=state.profile.name||'';qs('#profileRole').value=state.profile.role||'';qs('#profileStart').value=state.profile.startDate||'';qs('#profileAgency').value=state.profile.agency||'';openDialog('profileDialog');
 }
 
+function openTaskbook(){qs('#taskbookForm').reset();qs('#taskbookTemplate').value='Driver / Operator';qs('#taskbookName').value='Driver / Operator';openDialog('taskbookDialog');}
+function openTask(bookId){qs('#taskForm').reset();qs('#taskBookId').value=bookId;openDialog('taskDialog');}
+
 function download(filename,text,type){ const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200); }
 function csvEscape(v){ const s=String(v??''); return /[",\n]/.test(s)?`"${s.replaceAll('"','""')}"`:s; }
 function exportRows(filename,headers,rows){ download(filename,[headers,...rows].map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv'); }
 function exportCsv(){ exportRows(`responderlog-career-${new Date().toISOString().slice(0,10)}.csv`,['date','type','category','minutes','skill_confidence','note'],state.entries.map(e=>[e.date,e.type,e.category,e.minutes||'',e.confidence||'',e.note||''])); }
 function exportExposureCsv(){ exportRows(`responderlog-exposures-${new Date().toISOString().slice(0,10)}.csv`,['date','type','significance','decon','ppe','incident_reference','note'],state.exposures.map(e=>[e.date,e.type,e.severity,e.decon,e.ppe||'',e.ref||'',e.note||''])); }
-function exportJson(){ localStorage.setItem(BACKUP_KEY,String(Date.now())); download(`responderlog-backup-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema:'responderlog',version:2,exportedAt:new Date().toISOString(),data:state},null,2),'application/json');showToast('Full backup downloaded.'); }
+function exportJson(){ localStorage.setItem(BACKUP_KEY,String(Date.now())); download(`responderlog-backup-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema:'responderlog',version:3,exportedAt:new Date().toISOString(),data:state},null,2),'application/json');showToast('Full backup downloaded.'); }
 
 function rerender(){ renderView(currentView); }
 function confirmDelete(kind){ return confirm(`Delete this ${kind}? This cannot be undone unless it exists in a backup.`); }
@@ -61,6 +64,8 @@ document.addEventListener('click',event=>{
   if(action==='open-exposure'){openExposure();return;}
   if(action==='open-goal'){openGoal();return;}
   if(action==='open-profile'){openProfile();return;}
+  if(action==='open-taskbook'){openTaskbook();return;}
+  if(action==='open-task'){openTask(actionEl.dataset.bookId);return;}
   if(action==='backup-now'){exportJson();return;}
   if(action==='export-log'){exportCsv();return;}
   if(action==='export-exposures'){exportExposureCsv();return;}
@@ -71,11 +76,19 @@ document.addEventListener('click',event=>{
   const editCert=event.target.closest('[data-edit-cert]')?.dataset.editCert; if(editCert){openCert(editCert);return;}
   const editExposure=event.target.closest('[data-edit-exposure]')?.dataset.editExposure; if(editExposure){openExposure(editExposure);return;}
   const editGoal=event.target.closest('[data-edit-goal]')?.dataset.editGoal; if(editGoal){openGoal(editGoal);return;}
+  const openBook=event.target.closest('[data-open-taskbook]')?.dataset.openTaskbook;if(openBook){renderTaskbookDetail(openBook);return;}
+  const toggleTask=event.target.closest('[data-toggle-task]');if(toggleTask){const book=state.taskbooks.find(b=>b.id===toggleTask.dataset.bookId),task=book?.tasks.find(t=>t.id===toggleTask.dataset.toggleTask);if(task){task.done=!task.done;task.completedAt=task.done?new Date().toISOString():'';saveState();renderTaskbookDetail(book.id);showToast(task.done?'Task completed.':'Task reopened.');}return;}
+  const deleteTask=event.target.closest('[data-delete-task]');if(deleteTask&&confirmDelete('task')){const book=state.taskbooks.find(b=>b.id===deleteTask.dataset.bookId);if(book){book.tasks=book.tasks.filter(t=>t.id!==deleteTask.dataset.deleteTask);saveState();renderTaskbookDetail(book.id);}return;}
+  const deleteBook=event.target.closest('[data-delete-taskbook]')?.dataset.deleteTaskbook;if(deleteBook&&confirmDelete('taskbook')){state.taskbooks=state.taskbooks.filter(b=>b.id!==deleteBook);saveState();renderTaskbooks();showToast('Taskbook deleted.');return;}
   const deleteEntry=event.target.closest('[data-delete-entry]')?.dataset.deleteEntry; if(deleteEntry&&confirmDelete('career log entry')){state.entries=state.entries.filter(e=>e.id!==deleteEntry);saveState();rerender();showToast('Entry deleted.');return;}
   const deleteCert=event.target.closest('[data-delete-cert]')?.dataset.deleteCert; if(deleteCert&&confirmDelete('certification')){state.certs=state.certs.filter(c=>c.id!==deleteCert);saveState();rerender();showToast('Certification deleted.');return;}
   const deleteExposure=event.target.closest('[data-delete-exposure]')?.dataset.deleteExposure; if(deleteExposure&&confirmDelete('exposure record')){state.exposures=state.exposures.filter(e=>e.id!==deleteExposure);saveState();rerender();showToast('Exposure record deleted.');return;}
   const deleteGoal=event.target.closest('[data-delete-goal]')?.dataset.deleteGoal; if(deleteGoal&&confirmDelete('goal')){state.goals=state.goals.filter(g=>g.id!==deleteGoal);saveState();rerender();showToast('Goal deleted.');return;}
 });
+
+qs('#taskbookTemplate').addEventListener('change',event=>{qs('#taskbookName').value=event.target.value;});
+qs('#taskbookForm').addEventListener('submit',event=>{event.preventDefault();const template=qs('#taskbookTemplate').value,name=qs('#taskbookName').value.trim();if(!name)return;state.taskbooks.push({id:uid(),name,template,targetDate:qs('#taskbookDate').value,createdAt:new Date().toISOString(),tasks:(taskbookTemplates[template]||[]).map(name=>({id:uid(),name,note:'',done:false,completedAt:''}))});saveState();closeDialog('taskbookDialog');renderTaskbooks();showToast('Taskbook created.');});
+qs('#taskForm').addEventListener('submit',event=>{event.preventDefault();const book=state.taskbooks.find(b=>b.id===qs('#taskBookId').value),name=qs('#taskName').value.trim();if(!book||!name)return;book.tasks.push({id:uid(),name,note:qs('#taskNote').value.trim(),done:false,completedAt:''});saveState();closeDialog('taskDialog');renderTaskbookDetail(book.id);showToast('Task added.');});
 
 qs('#logForm').addEventListener('submit',event=>{
   event.preventDefault();

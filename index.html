@@ -26,6 +26,7 @@
         <button class="rail-link" data-view="certs"><span>✓</span>Certifications</button>
         <button class="rail-link" data-view="exposures"><span>◈</span>Exposures</button>
         <button class="rail-link" data-view="goals"><span>◎</span>Goals</button>
+        <button class="rail-link" data-view="taskbooks"><span>▣</span>Taskbooks</button>
         <button class="rail-link" data-view="portfolio"><span>★</span>Career report</button>
       </nav>
       <div class="rail-foot">
@@ -190,6 +191,34 @@
       </div>
       <label>Agency / department <span class="optional">optional</span><input id="profileAgency" maxlength="90" placeholder="For your career report" /></label>
       <button type="submit" class="primary full">Save profile</button>
+    </form>
+  </dialog>
+
+  <dialog id="taskbookDialog" class="modal">
+    <form id="taskbookForm">
+      <div class="modal-head">
+        <div><p class="eyebrow">NEW QUALIFICATION PATH</p><h2>Start a taskbook</h2></div>
+        <button type="button" class="icon-btn" data-close-dialog="taskbookDialog" aria-label="Close">×</button>
+      </div>
+      <label>Starting point
+        <select id="taskbookTemplate">
+          <option>Driver / Operator</option><option>Fire Officer I</option><option>Field Training Officer</option><option>Custom taskbook</option>
+        </select>
+      </label>
+      <label>Taskbook name<input id="taskbookName" required maxlength="90" value="Driver / Operator" /></label>
+      <label>Target completion date <span class="optional">optional</span><input id="taskbookDate" type="date" /></label>
+      <p class="privacy-inline compact">Start with a proven outline, then add, rename, complete, or remove tasks to match your department.</p>
+      <button type="submit" class="primary full">Create taskbook</button>
+    </form>
+  </dialog>
+
+  <dialog id="taskDialog" class="modal">
+    <form id="taskForm">
+      <div class="modal-head"><div><p class="eyebrow">TASKBOOK ITEM</p><h2>Add a task</h2></div><button type="button" class="icon-btn" data-close-dialog="taskDialog" aria-label="Close">×</button></div>
+      <input type="hidden" id="taskBookId" />
+      <label>Task description<input id="taskName" required maxlength="140" placeholder="Demonstrate safe apparatus placement" /></label>
+      <label>Evidence or evaluator note <span class="optional">optional</span><textarea id="taskNote" maxlength="240" rows="3" placeholder="What proves this task is complete?"></textarea></label>
+      <button type="submit" class="primary full">Add task</button>
     </form>
   </dialog>
 

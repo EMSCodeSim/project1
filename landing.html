@@ -8,6 +8,7 @@
   <title>ResponderLog | Your career record. Ready when it matters.</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="landing.css">
+  <link rel="stylesheet" href="lead.css">
 </head>
 <body>
   <header class="nav wrap">
@@ -57,7 +58,7 @@
         <div><p class="kicker">RESPONDERLOG FOR DEPARTMENTS</p><h2>Taskbooks people will actually finish.</h2><p class="lead small-lead">Replace scattered spreadsheets, paper signatures, and “where are they at?” conversations with a clear qualification path for every member.</p>
           <ul><li><b>Build custom taskbooks</b><span>Match department policies, apparatus, and promotional standards.</span></li><li><b>Verify work without chasing paper</b><span>Members submit progress; evaluators review and sign.</span></li><li><b>See readiness at a glance</b><span>Know who is current, stalled, expiring, or ready for the next step.</span></li></ul>
         </div>
-        <aside class="roi-card"><p class="kicker">TIME-SAVINGS ESTIMATE</p><h3>What is manual tracking costing?</h3><label>Members tracked <output id="membersOut">30</output><input id="members" type="range" min="10" max="250" step="5" value="30"></label><label>Admin hours saved / member / month <output id="hoursOut">0.5</output><input id="hours" type="range" min="0.25" max="2" step="0.25" value="0.5"></label><label>Estimated admin hourly cost <output id="rateOut">$35</output><input id="rate" type="range" min="20" max="75" step="5" value="35"></label><div class="roi-result"><span>Potential annual time value</span><strong id="savings">$6,300</strong><small>Illustrative estimate based on your inputs.</small></div><a class="button full" href="mailto:hello@responderlog.app?subject=ResponderLog%20Department%20Demo">Request department demo</a></aside>
+        <aside class="roi-card"><p class="kicker">TIME-SAVINGS ESTIMATE</p><h3>What is manual tracking costing?</h3><label>Members tracked <output id="membersOut">30</output><input id="members" type="range" min="10" max="250" step="5" value="30"></label><label>Admin hours saved / member / month <output id="hoursOut">0.5</output><input id="hours" type="range" min="0.25" max="2" step="0.25" value="0.5"></label><label>Estimated admin hourly cost <output id="rateOut">$35</output><input id="rate" type="range" min="20" max="75" step="5" value="35"></label><div class="roi-result"><span>Potential annual time value</span><strong id="savings">$6,300</strong><small>Illustrative estimate based on your inputs.</small></div><a class="button full" href="#interest">Request department demo</a></aside>
       </div>
     </section>
 
@@ -65,15 +66,17 @@
       <div class="section-head"><p class="kicker">SIMPLE PRICING</p><h2>Start free. Upgrade when your record starts working for you.</h2></div>
       <div class="pricing">
         <article><p class="plan">PERSONAL</p><h3>Free <small>forever</small></h3><p>Build the habit and own your history.</p><ul><li>Unlimited career entries</li><li>Certification tracking</li><li>Exposure log</li><li>Local backup and CSV export</li></ul><a class="button ghost full" href="/index.html">Start free</a></article>
-        <article class="popular"><span class="flag">MOST POPULAR</span><p class="plan">PRO</p><h3>$39 <small>/ year</small></h3><p>For responders preparing for what is next.</p><ul><li>Everything in Personal</li><li>Promotion portfolio builder</li><li>Advanced career analytics</li><li>Custom taskbooks and goals</li><li>PDF report templates</li></ul><a class="button full" href="mailto:hello@responderlog.app?subject=ResponderLog%20Pro%20Early%20Access">Join Pro early access</a></article>
-        <article><p class="plan">DEPARTMENT</p><h3>$149 <small>/ month</small></h3><p>For teams that need visible readiness.</p><ul><li>Up to 50 members</li><li>Custom department taskbooks</li><li>Evaluator sign-offs</li><li>Training and renewal dashboard</li><li>Exportable compliance reports</li></ul><a class="button ghost full" href="mailto:hello@responderlog.app?subject=ResponderLog%20Department%20Demo">Book a demo</a></article>
+        <article class="popular"><span class="flag">MOST POPULAR</span><p class="plan">PRO</p><h3>$39 <small>/ year</small></h3><p>For responders preparing for what is next.</p><ul><li>Everything in Personal</li><li>Promotion portfolio builder</li><li>Advanced career analytics</li><li>Custom taskbooks and goals</li><li>PDF report templates</li></ul><a class="button full" href="#interest">Join Pro early access</a></article>
+        <article><p class="plan">DEPARTMENT</p><h3>$149 <small>/ month</small></h3><p>For teams that need visible readiness.</p><ul><li>Up to 50 members</li><li>Custom department taskbooks</li><li>Evaluator sign-offs</li><li>Training and renewal dashboard</li><li>Exportable compliance reports</li></ul><a class="button ghost full" href="#interest">Book a demo</a></article>
       </div>
       <p class="pricing-note">Department features are opening to a limited founding cohort. No credit card is collected on this site.</p>
     </section>
 
+    <section id="interest" class="section interest"><div class="wrap split"><div><p class="kicker">FOUNDING ACCESS</p><h2>Help shape the tool your department actually needs.</h2><p class="lead small-lead">Join as an individual or tell us about your department. We are inviting a small first group before shared accounts and billing open.</p></div><form name="responderlog-interest" method="POST" action="/thanks.html" data-netlify="true" class="lead-form"><input type="hidden" name="form-name" value="responderlog-interest"><label>Your name<input name="name" required autocomplete="name"></label><label>Work email<input name="email" type="email" required autocomplete="email"></label><label>I’m interested in<select name="plan"><option>Personal Pro</option><option>Department pilot</option><option>Both</option></select></label><label>Department size <span class="optional">optional</span><input name="department-size" type="number" min="1" max="10000"></label><button class="button full" type="submit">Request founding access</button><small>No spam. One reply about access and fit.</small></form></div></section>
+
     <section class="final"><div class="wrap"><p class="kicker">DON'T RELY ON MEMORY</p><h2>Start the record your future self will need.</h2><p>Free, private, and useful from the first shift.</p><a class="button" href="/index.html">Open ResponderLog free <b>→</b></a></div></section>
   </main>
-  <footer class="wrap"><a class="brand" href="/"><span>RL</span>ResponderLog</a><p>Career organization for fire and EMS professionals.</p><div><a href="mailto:hello@responderlog.app">Contact</a><a href="/index.html">App</a><a href="https://github.com/EMSCodeSim/project1">GitHub</a></div><small>ResponderLog is not an ePCR, official agency record, or substitute for required department documentation.</small></footer>
+  <footer class="wrap"><a class="brand" href="/"><span>RL</span>ResponderLog</a><p>Career organization for fire and EMS professionals.</p><div><a href="#interest">Contact</a><a href="/privacy.html">Privacy</a><a href="/index.html">App</a></div><small>ResponderLog is not an ePCR, official agency record, or substitute for required department documentation.</small></footer>
   <script src="landing.js"></script>
 </body>
 </html>

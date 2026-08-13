@@ -2,7 +2,7 @@
   "name": "ResponderLog — Fire & EMS Career Vault",
   "short_name": "ResponderLog",
   "description": "Private, offline-first career logging for Fire & EMS responders.",
-  "start_url": "./",
+  "start_url": "/index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",

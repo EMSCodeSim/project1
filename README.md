@@ -47,12 +47,15 @@ ResponderLog is **not** an ePCR, medical device, official department record, exp
 - Certification expiry alerts
 - Optional renewal-hour progress
 - Career goals + progress
+- Personal taskbooks with Driver / Operator, Fire Officer I, Field Training Officer, and custom templates
+- Task completion history, progress meters, and printable qualification views
 - Print-friendly career report
 - Dark / light themes
 - JSON backup/import
 - CSV exports
 - Automatic migration from `responderlog.v1`
 - No dependencies or build step
+- Netlify-native founding-access lead capture plus privacy and confirmation pages
 
 ## Run locally
 
