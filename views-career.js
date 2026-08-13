@@ -48,6 +48,7 @@ function renderCareer(){
       <button class="quick-card exposure" data-view="exposures" style="width:100%;min-height:128px"><span class="quick-icon">EXP</span><strong>Exposure record</strong><small>${state.exposures.length} personal records • ${significant} significant</small></button>
       <button class="quick-card win" data-view="goals" style="width:100%;min-height:128px"><span class="quick-icon">◎</span><strong>Career goals</strong><small>${activeGoals} active targets • keep the next step visible</small></button>
       <button class="quick-card training" data-view="taskbooks" style="width:100%;min-height:128px"><span class="quick-icon">▣</span><strong>Taskbooks</strong><small>${state.taskbooks.length} qualification paths • turn a goal into completed work</small></button>
+      <button class="quick-card" data-view="readiness" style="width:100%;min-height:128px"><span class="quick-icon">◉</span><strong>Promotion readiness</strong><small>See your evidence, gaps, and strongest next move</small></button>
       <button class="quick-card skill" data-view="portfolio" style="width:100%;min-height:128px"><span class="quick-icon">★</span><strong>Career report</strong><small>Training, skills, credentials, accomplishments, and promotion evidence</small></button>
     </section>
     ${expDue?`<div class="backup-nudge"><p><strong style="color:var(--text)">${plural(expDue,'certification')} expired.</strong><br>Open Certifications to update your renewal status.</p><button class="secondary compact-button" data-view="certs">Review</button></div>`:''}`;
@@ -69,6 +70,33 @@ function renderTaskbookDetail(id){
   qs('#app').innerHTML=`<div class="view-title"><button class="text-btn" data-view="taskbooks">← All taskbooks</button><p class="eyebrow" style="margin-top:16px">QUALIFICATION PATH</p><h2>${escapeHtml(book.name)}</h2><p class="muted">${p.done} of ${p.total} complete${book.targetDate?` • target ${formatDate(`${book.targetDate}T12:00:00`,{year:true})}`:''}</p><div class="title-actions"><button class="primary" data-action="open-task" data-book-id="${book.id}">+ Add task</button><button class="secondary" data-action="print-report">Print</button><button class="text-btn danger-text" data-delete-taskbook="${book.id}">Delete taskbook</button></div></div>
   <article class="taskbook-meter card"><div><span>Overall progress</span><strong>${p.pct}%</strong></div><div class="progress-track"><div class="progress-fill" style="--progress:${p.pct}%"></div></div></article>
   <section class="task-list">${book.tasks.map((task,i)=>`<article class="task-row card ${task.done?'done':''}"><button class="task-check" data-toggle-task="${task.id}" data-book-id="${book.id}" aria-label="Mark ${escapeHtml(task.name)} ${task.done?'incomplete':'complete'}">${task.done?'✓':''}</button><div><strong>${escapeHtml(task.name)}</strong>${task.note?`<span>${escapeHtml(task.note)}</span>`:''}</div><small>${task.done&&task.completedAt?formatDate(task.completedAt):`Task ${i+1}`}</small><button class="mini-action" data-delete-task="${task.id}" data-book-id="${book.id}">Delete</button></article>`).join('')||emptyCard('＋','No tasks yet','Add the first requirement for this qualification.')}</section>`;
+}
+
+function readinessData(){
+  const role=state.settings.targetRole||'Fire Officer I',profile=readinessProfiles[role]||readinessProfiles['Fire Officer I'];
+  const certText=state.certs.map(c=>`${c.name} ${c.category}`).join(' ').toLowerCase();
+  const certHits=profile.certs.filter(x=>certText.includes(x.toLowerCase())).length;
+  const certPct=profile.certs.length?Math.round(certHits/profile.certs.length*100):100;
+  const training=state.entries.filter(e=>e.type==='training').reduce((s,e)=>s+(Number(e.minutes)||0),0)/60;
+  const skills=state.entries.filter(e=>e.type==='skill').length;
+  const wins=state.entries.filter(e=>e.type==='accomplishment').length;
+  const book=profile.taskbook?state.taskbooks.find(b=>b.name.toLowerCase().includes(profile.taskbook.toLowerCase())):null;
+  const bookPct=profile.taskbook?(book?taskbookProgress(book).pct:0):100;
+  const metrics=[{name:'Credential match',value:certPct,detail:`${certHits} of ${profile.certs.length} suggested credentials found`},{name:'Training evidence',value:clamp(Math.round(training/profile.training*100),0,100),detail:`${Math.round(training*10)/10} of ${profile.training} hours logged`},{name:'Skill repetitions',value:clamp(Math.round(skills/profile.skills*100),0,100),detail:`${skills} of ${profile.skills} reps logged`},{name:'Leadership evidence',value:clamp(Math.round(wins/profile.wins*100),0,100),detail:`${wins} of ${profile.wins} career wins logged`},{name:'Taskbook progress',value:bookPct,detail:profile.taskbook?(book?`${taskbookProgress(book).done} of ${taskbookProgress(book).total} tasks complete`:'Taskbook not started'):'No taskbook required'}];
+  const score=Math.round(metrics.reduce((s,m)=>s+m.value,0)/metrics.length);
+  return {role,profile,metrics,score,gap:[...metrics].sort((a,b)=>a.value-b.value)[0]};
+}
+
+function renderReadiness(){
+  currentView='readiness';navState('readiness');const r=readinessData();
+  const level=r.score>=80?'Strong evidence base':r.score>=55?'Building momentum':'Foundation stage';
+  qs('#app').innerHTML=`<div class="view-title no-print"><p class="eyebrow">PROMOTION BRIEFING</p><h2>Readiness</h2><p class="muted">A transparent evidence check built from your own records—not a guarantee of promotion, certification, or operational competency.</p><div class="title-actions"><label class="target-select">Target role<select id="readinessRole">${Object.keys(readinessProfiles).map(x=>`<option ${x===r.role?'selected':''}>${escapeHtml(x)}</option>`).join('')}</select></label><button class="secondary" data-action="print-report">Print briefing</button></div></div>
+  <article class="readiness-hero card"><div class="readiness-ring" style="--score:${r.score}%"><strong>${r.score}</strong><span>/100</span></div><div><p class="eyebrow">${escapeHtml(r.role.toUpperCase())}</p><h3>${level}</h3><p class="muted">This score measures documented evidence inside ResponderLog. Your department’s requirements always control.</p></div></article>
+  <section class="section-head"><div><p class="eyebrow">EVIDENCE MAP</p><h3>What supports your next step</h3></div></section>
+  <section class="readiness-list">${r.metrics.map(m=>`<article class="readiness-row card"><div><strong>${escapeHtml(m.name)}</strong><span>${escapeHtml(m.detail)}</span></div><b>${m.value}%</b><div class="progress-track"><div class="progress-fill" style="--progress:${m.value}%"></div></div></article>`).join('')}</section>
+  <section class="section-head"><div><p class="eyebrow">BEST NEXT MOVE</p><h3>Close the clearest gap</h3></div></section><article class="next-move card"><span>01</span><div><strong>${escapeHtml(r.gap.name)} is your thinnest documented area.</strong><p>${escapeHtml(r.profile.next)}</p></div><button class="primary no-print" data-view="${r.gap.name==='Taskbook progress'?'taskbooks':r.gap.name==='Credential match'?'certs':'history'}">Work on this →</button></article>
+  <div class="privacy-strip"><b>HOW IT WORKS</b><span>No hidden algorithm and no AI judgment. The score is the simple average of the five evidence categories shown above.</span></div>`;
+  qs('#readinessRole')?.addEventListener('change',e=>{state.settings.targetRole=e.target.value;saveState();renderReadiness();});
 }
 
 function renderPortfolio(){
@@ -105,6 +133,7 @@ function renderView(view){
   else if(view==='goals')renderGoals();
   else if(view==='taskbooks')renderTaskbooks();
   else if(view.startsWith('taskbook:'))renderTaskbookDetail(view.split(':')[1]);
+  else if(view==='readiness')renderReadiness();
   else if(view==='career')renderCareer();
   else if(view==='portfolio')renderPortfolio();
   window.scrollTo({top:0,behavior:'smooth'});
