@@ -2,6 +2,13 @@ const STORAGE_KEY = 'responderlog.v2';
 const OLD_STORAGE_KEY = 'responderlog.v1';
 const BACKUP_KEY = 'responderlog.lastBackup';
 
+const taskbookTemplates = {
+  'Driver / Operator': ['Complete department driving orientation','Document supervised apparatus driving','Complete daily / weekly apparatus checks','Demonstrate positioning and spotting','Demonstrate pump engagement and changeover','Calculate friction loss and pump discharge pressure','Establish hydrant water supply','Operate from tank-to-pump and refill','Supply attack lines and master stream','Complete emergency and failure procedures','Pass final road and pump evaluation'],
+  'Fire Officer I': ['Confirm prerequisite certifications','Complete Fire Officer I course','Document company-level training delivery','Complete a personnel coaching session','Write an incident action plan','Complete a pre-incident plan','Lead a company drill','Document conflict-resolution experience','Complete required NIMS / ICS courses','Pass department taskbook review','Complete certification testing'],
+  'Field Training Officer': ['Confirm experience prerequisites','Complete FTO / preceptor course','Review evaluation and documentation policy','Demonstrate coaching and feedback','Complete supervised student evaluations','Document remediation planning','Demonstrate difficult-conversation skills','Review clinical QI process','Complete final evaluator sign-off'],
+  'Custom taskbook': ['Define the qualification standard','Add required courses and certifications','Add hands-on performance tasks','Assign evaluator expectations','Complete final review']
+};
+
 const catalog = {
   incident: ['Medical', 'Trauma', 'Cardiac arrest', 'Motor vehicle collision', 'Structure fire', 'Wildland / brush', 'Alarm / investigation', 'Hazmat', 'Rescue / extrication', 'Public assist', 'Standby / coverage', 'Other incident'],
   skill: ['IV access', 'IO access', '12-lead ECG', 'Airway management', 'BVM ventilation', 'CPAP', 'Medication administration', 'Patient assessment', 'Splinting', 'Hemorrhage control', 'Extrication', 'Pump operations', 'Hose deployment', 'Ladders', 'Forcible entry', 'Search', 'Ropes / knots', 'SCBA / air management', 'Driver / apparatus', 'Other skill'],
@@ -25,9 +32,9 @@ let toastTimer = null;
 
 function defaultState(){
   return {
-    version:2,
+    version:3,
     profile:{name:'',role:'',agency:'',startDate:''},
-    entries:[], certs:[], exposures:[], goals:[],
+    entries:[], certs:[], exposures:[], goals:[], taskbooks:[],
     settings:{theme:'dark'}
   };
 }
@@ -53,12 +60,13 @@ function loadState(){
 function normalizeState(input={}){
   const base = defaultState();
   return {
-    version:2,
+    version:3,
     profile:{...base.profile,...(input.profile||{})},
     entries:Array.isArray(input.entries)?input.entries:[],
     certs:Array.isArray(input.certs)?input.certs:[],
     exposures:Array.isArray(input.exposures)?input.exposures:[],
     goals:Array.isArray(input.goals)?input.goals:[],
+    taskbooks:Array.isArray(input.taskbooks)?input.taskbooks:[],
     settings:{...base.settings,...(input.settings||{})}
   };
 }
@@ -108,8 +116,8 @@ function applyTheme(){
 function navState(view){
   qsa('.rail-link[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===view));
   qsa('.nav-item[data-view]').forEach(btn=>{
-    const careerGroup=['career','portfolio','exposures','goals'];
-    btn.classList.toggle('active',btn.dataset.view===view||(btn.dataset.view==='career'&&careerGroup.includes(view)));
+    const careerGroup=['career','portfolio','exposures','goals','taskbooks'];
+    btn.classList.toggle('active',btn.dataset.view===view||(btn.dataset.view==='career'&&(careerGroup.includes(view)||view.startsWith('taskbook:'))));
   });
 }
 
