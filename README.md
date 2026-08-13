@@ -2,6 +2,16 @@
 
 ResponderLog is a privacy-first, offline-first personal career vault for firefighters, EMTs, paramedics, rescue personnel, and other responders.
 
+The repository now includes a conversion-focused public site (`landing.html`) and the complete free app (`index.html`). Netlify serves the public site at `/` and the career log at `/index.html`.
+
+## Business model
+
+- **Personal:** free offline career log and exports; no account required.
+- **Pro:** planned $39/year portfolio reports, analytics, and custom taskbooks.
+- **Department:** planned $149/month founding tier for up to 50 members, custom taskbooks, evaluator sign-offs, readiness tracking, and compliance exports.
+
+Paid features are presented as early access until billing, authentication, and shared department data are connected. The site does not imply that payment is currently being collected.
+
 ## Product idea
 
 Department systems are built for the department. ResponderLog is built for the individual responder and is intended to remain useful across stations, employers, roles, and decades.
