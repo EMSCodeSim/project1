@@ -16,3 +16,7 @@
   for = "/manifest.json"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+[[redirects]]
+  from = "/"
+  to = "/landing.html"
+  status = 200
